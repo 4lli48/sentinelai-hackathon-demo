@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SentinelAI Finance Data Readiness Schema",
+  "description": "Standardized financial transaction context schema unifying multi-source data before ingestion into deterministic rule engines, anomaly models, and Sovereign AI reasoning.",
+  "type": "object",
+  "required": [
+    "caseId",
+    "transactionData",
+    "customerBaseline",
+    "behavioralFeatures",
+    "threatDomainIndicators",
+    "policyFactors",
+    "dataSourceProvenance",
+    "privacyClassification",
+    "syntheticRealLabel"
+  ],
+  "properties": {
+    "caseId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique cryptographic identifier assigned to the immutable case record."
+    },
+    "transactionData": {
+      "type": "object",
+      "description": "Normalized transfer metadata ingested from banking core systems.",
+      "required": ["transactionId", "amountSar", "currency", "timestamp", "senderAccount", "recipientName", "destinationCountry", "transferType"],
+      "properties": {
+        "transactionId": { "type": "string" },
+        "amountSar": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "default": "SAR" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "senderAccount": { "type": "string" },
+        "recipientName": { "type": "string" },
+        "recipientAccount": { "type": "string" },
+        "destinationCountry": { "type": "string" },
+        "transferType": { "type": "string", "enum": ["local", "international", "merchant", "p2p", "corporate"] }
+      }
+    },
+    "customerBaseline": {
+      "type": "object",
+      "description": "Historical behavioural profile baseline aggregated over trailing 90 days.",
+      "required": ["customerId", "averageAmountSar", "historicalTransactionCount", "typicalCorridors", "activeHoursWindow", "profileRiskTier"],
+      "properties": {
+        "customerId": { "type": "string" },
+        "averageAmountSar": { "type": "number" },
+        "historicalTransactionCount": { "type": "integer", "minimum": 0 },
+        "typicalCorridors": { "type": "array", "items": { "type": "string" } },
+        "activeHoursWindow": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 23 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "profileRiskTier": { "type": "string", "enum": ["Low", "Medium", "High"] }
+      }
+    },
+    "behavioralFeatures": {
+      "type": "object",
+      "description": "Calculated statistical deviation metrics derived by comparing transaction against customer baseline.",
+      "required": ["amountDeviationRatio", "zScore", "isOffHours", "isNewBeneficiary", "rolling24hCount"],
+      "properties": {
+        "amountDeviationRatio": { "type": "number", "description": "Transaction amount divided by baseline mean." },
+        "zScore": { "type": "number", "description": "Statistical standard score of the transfer amount." },
+        "isOffHours": { "type": "boolean" },
+        "isNewBeneficiary": { "type": "boolean" },
+        "rolling24hCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "threatDomainIndicators": {
+      "type": "object",
+      "description": "Cyber intelligence and counterparty merchant domain evaluation.",
+      "required": ["domainName", "reputationCategory", "isPunycodeOrHyphenated", "mandatoryOverrideTriggered"],
+      "properties": {
+        "domainName": { "type": "string" },
+        "reputationCategory": { "type": "string", "enum": ["Trusted", "Needs Review", "High Risk"] },
+        "isPunycodeOrHyphenated": { "type": "boolean" },
+        "mandatoryOverrideTriggered": { "type": "boolean" }
+      }
+    },
+    "policyFactors": {
+      "type": "object",
+      "description": "Deterministic rule evaluation state and triggered risk factor codes.",
+      "required": ["policyScore", "riskLevel", "preliminaryDecision", "activatedFactorCodes", "mandatoryOverrideActive"],
+      "properties": {
+        "policyScore": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "riskLevel": { "type": "string", "enum": ["Low", "Medium", "High", "Critical"] },
+        "preliminaryDecision": { "type": "string", "enum": ["Approve", "Additional Verification", "Temporary Hold", "Manual Review"] },
+        "activatedFactorCodes": { "type": "array", "items": { "type": "string" } },
+        "mandatoryOverrideActive": { "type": "boolean" }
+      }
+    },
+    "dataSourceProvenance": {
+      "type": "object",
+      "description": "Traceability metadata tracking data lineage and system origin.",
+      "required": ["ingestionChannel", "baselineDatabase", "ingestionTimestamp", "dataChecksumSha256"],
+      "properties": {
+        "ingestionChannel": { "type": "string" },
+        "baselineDatabase": { "type": "string" },
+        "ingestionTimestamp": { "type": "string", "format": "date-time" },
+        "dataChecksumSha256": { "type": "string" }
+      }
+    },
+    "privacyClassification": {
+      "type": "object",
+      "description": "Data governance and privacy boundary rules under SDAIA PDPL.",
+      "required": ["classificationTier", "piiMaskingApplied", "sovereignExecutionBoundary"],
+      "properties": {
+        "classificationTier": { "type": "string", "enum": ["Public", "Internal", "Confidential", "Restricted"] },
+        "piiMaskingApplied": { "type": "boolean" },
+        "sovereignExecutionBoundary": { "type": "string", "enum": ["Local-AirGapped", "On-Premise", "Sovereign-Cloud"] }
+      }
+    },
+    "syntheticRealLabel": {
+      "type": "object",
+      "description": "Benchmark tagging indicating whether record is synthetic testbed or live telemetry.",
+      "required": ["isSynthetic", "scenarioIdentifier"],
+      "properties": {
+        "isSynthetic": { "type": "boolean" },
+        "scenarioIdentifier": {
+          "type": "string",
+          "enum": [
+            "Routine_Local_Transfer",
+            "Cross_Border_Verification",
+            "New_Beneficiary_Hold",
+            "Behavioral_Drift_Hold",
+            "Suspicious_Merchant_Domain",
+            "Composite_AML_Escalation",
+            "Production_Live_Stream"
+          ]
+        }
+      }
+    }
+  }
+}

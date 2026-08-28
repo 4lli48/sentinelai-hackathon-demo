@@ -1,0 +1,37 @@
+# SentinelAI local environment template
+# Copy this file to .env, then replace only the values you own.
+# Never commit or share the resulting .env file.
+
+# Required for saved analyses, RAG citations, case history, and beneficiary history.
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVER_ONLY_SUPABASE_SERVICE_ROLE_KEY
+
+# Optional cloud AI API key (leave empty for local-only Sovereign AI mode)
+AI_API_KEY=YOUR_AI_API_KEY
+GEMINI_API_KEY=YOUR_API_KEY_IF_APPLICABLE
+
+# Choose "local" for sovereign air-gapped AI mode, or "gemini" / cloud mode.
+# Local mode calls only 127.0.0.1 and keeps 100% of data on the local machine.
+SENTINEL_AI_PROVIDER=local
+LOCAL_AI_MODEL=local-risk-model
+LOCAL_AI_URL=http://127.0.0.1:11434/api/chat
+
+# Required for signed local session cookies. Generate a long random value locally.
+JWT_SECRET=REPLACE_WITH_A_LONG_RANDOM_LOCAL_SECRET
+
+# Optional OAuth configuration for authentication.
+OAUTH_SERVER_URL=
+VITE_APP_ID=
+VITE_OAUTH_PORTAL_URL=
+OWNER_OPEN_ID=
+OWNER_NAME=
+
+# Cloud API endpoints (optional)
+BUILT_IN_FORGE_API_URL=
+BUILT_IN_FORGE_API_KEY=
+VITE_FRONTEND_FORGE_API_URL=
+VITE_FRONTEND_FORGE_API_KEY=
+
+# Optional local analytics. Leave blank to disable external analytics.
+VITE_ANALYTICS_ENDPOINT=
+VITE_ANALYTICS_WEBSITE_ID=
